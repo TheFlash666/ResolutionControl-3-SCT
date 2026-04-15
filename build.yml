@@ -1,0 +1,36 @@
+# .github/workflows/build.yml
+name: Build Mod
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest 
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'      
+          distribution: 'temurin'  
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        # 该 action 会自动处理 gradlew 的执行权限并缓存依赖
+
+      - name: Build with Gradle
+        run: ./gradlew build
+
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mod JARs
+          path: build/libs/*.jar   # 大部分模组构建产物都在此目录下
